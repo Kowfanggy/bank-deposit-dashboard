@@ -1,4 +1,4 @@
-d3.csv("../data/bank_clean.csv")
+d3.csv("bank_clean.csv")
     .then(function(data) {
 
 
