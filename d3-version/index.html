@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Bank Deposit Analysis</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+</head>
+
+
+<body>
+
+
+<!-- ================================
+     HEADER
+================================ -->
+
+<header>
+
+    <div class="header-icon">
+        🏦
+    </div>
+
+    <h1>
+        BANK DEPOSIT ANALYSIS
+    </h1>
+
+    <p>
+        (การวิเคราะห์การฝากเงินธนาคาร)
+    </p>
+
+    <span>
+        Customer & Deposit Dashboard
+        (แดชบอร์ดข้อมูลลูกค้าและการฝากเงิน)
+    </span>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- ================================
+     FILTER
+================================ -->
+
+<section class="filter-container">
+
+
+    <div class="filter-box">
+
+        <div class="filter-icon">
+            💰
+        </div>
+
+        <div class="filter-label">
+
+            <strong>
+                Deposit Status
+            </strong>
+
+            <span>
+                (สถานะการฝากเงิน)
+            </span>
+
+        </div>
+
+
+        <select id="depositFilter">
+
+            <option value="All">
+                All Status (ทั้งหมด)
+            </option>
+
+            <option value="yes">
+                Yes (ฝากเงิน)
+            </option>
+
+            <option value="no">
+                No (ไม่ฝากเงิน)
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <div class="filter-box">
+
+        <div class="filter-icon job-icon">
+            👤
+        </div>
+
+        <div class="filter-label">
+
+            <strong>
+                Job Filter
+            </strong>
+
+            <span>
+                (ตัวกรองตามอาชีพ)
+            </span>
+
+        </div>
+
+
+        <select id="jobFilter">
+
+            <option value="All">
+                All Jobs (ทุกอาชีพ)
+            </option>
+
+        </select>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================================
+     INTERACTION NOTICE
+================================ -->
+
+<div class="interaction-note">
+
+    🖱️
+    <strong>
+        Interactive Dashboard:
+    </strong>
+
+    Click a bar or donut segment to filter the dashboard
+    (คลิกกราฟเพื่อกรองข้อมูล)
+
+</div>
+
+
+
+<!-- ================================
+     OVERVIEW
+================================ -->
+
+<section class="overview-card">
+
+
+    <div class="overview-icon">
+        📊
+    </div>
+
+
+    <div class="overview-text">
+
+        <h2>
+            Dashboard Overview
+        </h2>
+
+        <p>
+            ภาพรวมข้อมูลลูกค้าและพฤติกรรมการฝากเงิน
+        </p>
+
+    </div>
+
+
+
+    <div class="overview-stats">
+
+
+        <div class="overview-stat records-stat">
+
+            <div class="stat-icon">
+                👥
+            </div>
+
+            <strong>
+                11,162
+            </strong>
+
+            <span>
+                Total Records
+                <br>
+                (จำนวนข้อมูลทั้งหมด)
+            </span>
+
+        </div>
+
+
+
+        <div class="overview-stat columns-stat">
+
+            <div class="stat-icon">
+                📋
+            </div>
+
+            <strong>
+                17
+            </strong>
+
+            <span>
+                Data Columns
+                <br>
+                (จำนวนคอลัมน์)
+            </span>
+
+        </div>
+
+
+
+        <div class="overview-stat rate-stat">
+
+            <div class="stat-icon">
+                💵
+            </div>
+
+            <strong>
+                47.38%
+            </strong>
+
+            <span>
+                Deposit Rate
+                <br>
+                (อัตราการฝากเงิน)
+            </span>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ================================
+     KPI
+================================ -->
+
+<section class="kpi-container">
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-icon">
+            👥
+        </div>
+
+        <span>
+            Total Customers
+            <small>
+                (จำนวนลูกค้าทั้งหมด)
+            </small>
+        </span>
+
+        <h2 id="totalCustomers">
+            0
+        </h2>
+
+    </div>
+
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-icon">
+            💰
+        </div>
+
+        <span>
+            Deposit Yes
+            <small>
+                (ลูกค้าที่ฝากเงิน)
+            </small>
+        </span>
+
+        <h2 id="depositYes">
+            0
+        </h2>
+
+    </div>
+
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-icon">
+            🎂
+        </div>
+
+        <span>
+            Average Age
+            <small>
+                (อายุเฉลี่ย)
+            </small>
+        </span>
+
+        <h2 id="averageAge">
+            0
+        </h2>
+
+    </div>
+
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-icon">
+            💵
+        </div>
+
+        <span>
+            Average Balance
+            <small>
+                (ยอดเงินคงเหลือเฉลี่ย)
+            </small>
+        </span>
+
+        <h2 id="averageBalance">
+            0
+        </h2>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================================
+     CHARTS
+================================ -->
+
+<section class="chart-grid">
+
+
+    <!-- BAR -->
+
+    <div class="chart-card">
+
+        <div class="chart-title-row">
+
+            <div>
+
+                <h3>
+                    Deposit by Job
+                </h3>
+
+                <p>
+                    (การฝากเงินแยกตามอาชีพ)
+                </p>
+
+            </div>
+
+
+            <button
+                id="animateBarBtn"
+                class="animate-btn">
+
+                ▶ Animate
+
+            </button>
+
+        </div>
+
+
+        <div class="click-hint">
+            🖱️ Click a bar to filter by job
+        </div>
+
+
+        <div id="barChart"></div>
+
+    </div>
+
+
+
+    <!-- DONUT -->
+
+    <div class="chart-card">
+
+        <div class="chart-title-row">
+
+            <div>
+
+                <h3>
+                    Deposit Status
+                </h3>
+
+                <p>
+                    (สถานะการฝากเงิน)
+                </p>
+
+            </div>
+
+
+            <button
+                id="animateDonutBtn"
+                class="animate-btn">
+
+                ▶ Animate
+
+            </button>
+
+        </div>
+
+
+        <div class="click-hint">
+            🖱️ Click a segment to filter by status
+        </div>
+
+
+        <div id="donutChart"></div>
+
+    </div>
+
+
+
+    <!-- LINE -->
+
+    <div class="chart-card line-card">
+
+        <div class="chart-title-row">
+
+            <div>
+
+                <h3>
+                    Deposit by Month
+                </h3>
+
+                <p>
+                    (จำนวนการฝากเงินแยกตามเดือน)
+                </p>
+
+            </div>
+
+
+            <button
+                id="animateLineBtn"
+                class="animate-btn">
+
+                ▶ Animate
+
+            </button>
+
+        </div>
+
+
+        <div id="lineChart"></div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================================
+     CUSTOMER TABLE
+================================ -->
+
+<section class="table-card">
+
+
+    <div class="table-header">
+
+
+        <div class="table-title">
+
+            <div class="table-icon">
+                📋
+            </div>
+
+            <div>
+
+                <h3>
+                    Customer Data
+                </h3>
+
+                <p>
+                    (ข้อมูลลูกค้า)
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="search-box">
+
+            <label for="searchInput">
+                🔎 Search
+            </label>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search customer data...">
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="table-scroll">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Job
+                        <span>(อาชีพ)</span>
+                    </th>
+
+                    <th>
+                        Age
+                        <span>(อายุ)</span>
+                    </th>
+
+                    <th>
+                        Balance
+                        <span>(ยอดเงินคงเหลือ)</span>
+                    </th>
+
+                    <th>
+                        Housing
+                        <span>(สินเชื่อที่อยู่อาศัย)</span>
+                    </th>
+
+                    <th>
+                        Loan
+                        <span>(สินเชื่อส่วนบุคคล)</span>
+                    </th>
+
+                    <th>
+                        Deposit
+                        <span>(การฝากเงิน)</span>
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="tableBody"></tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- PAGINATION -->
+
+    <div class="pagination-area">
+
+
+        <div class="page-info">
+
+            <span id="pageInfo">
+                Showing 1–20
+            </span>
+
+        </div>
+
+
+        <div
+            id="pagination"
+            class="pagination">
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+</main>
+
+
+
+<!-- TOOLTIP -->
+
+<div
+    id="tooltip"
+    class="tooltip">
+</div>
+
+
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
